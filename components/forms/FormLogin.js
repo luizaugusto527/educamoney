@@ -6,7 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 
 export default function FormLogin({ onLogin, erro }) {
   const [verSenha, setVersenha] = useState(true)
-  const [login, setLogin] = useState({ email: "", senha: "" })
+  const [login, setLogin] = useState({ email: "teste@teste.com", senha: "123" })
   const [erroEmail, setErroEmail] = useState("")
   const [erroSenha, setErroSenha] = useState("")
 
@@ -50,7 +50,7 @@ export default function FormLogin({ onLogin, erro }) {
   return (
     <ScrollView>
       <Text style={styles.o}>Olá, Estudante!</Text>
-      {erro && <Text style={[styles.erroLogin]}>{erro}</Text> || <Text style={styles.u}>Faca o login para continuar</Text>}
+      {erro && <Text style={[styles.erroLogin]}>{erro}</Text> || <Text style={styles.u}>Faça o login para continuar</Text>}
 
       <Text style={styles.label}>E-mail</Text>
       <TextInput style={styles.input} onChangeText={(text) => setLogin({ ...login, email: text })} value={login.email} />

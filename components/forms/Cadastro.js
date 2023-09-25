@@ -1,8 +1,11 @@
-import { StyleSheet, Text, TextInput, TouchableOpacity, ScrollView, Image, View } from 'react-native';
+import { StyleSheet, Text, TextInput, TouchableOpacity, ScrollView, Image, View, Alert, ActivityIndicator } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import api from '../../services/api';
+import { getFirestore, collection, addDoc, query, where, getDocs } from 'firebase/firestore';
+import firebaseApp from '../../config'; 
+
+const db = getFirestore(firebaseApp);
 
 
 export default function FormLogin() {
@@ -12,7 +15,9 @@ export default function FormLogin() {
     const [erroEmail, setErroEmail] = useState("")
     const [erroNome, setErroNome] = useState("")
     const [erroSenha, setErroSenha] = useState("")
+    const [carregando, setCarregando] = useState(false)
 
+    const clienteCollection = collection(db, "Usuario");
 
     const [icone, setIcone] = useState('eye-off')
 
@@ -24,53 +29,62 @@ export default function FormLogin() {
 
     }
 
-    function validar() {
+    async function validar() {
+        setCarregando(true);
         const email = user.email;
         const senha = user.senha;
         const nome = user.nome;
         let regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-
+    
         if (!regex.test(email)) {
-            setErroEmail("E-mail Invalido")
+            setErroEmail("E-mail Inválido");
         } else {
-            setErroEmail("")
-
+            setErroEmail("");
         }
-        if (senha == '') {
-            setErroSenha("Senha Invalida")
+    
+        if (senha === '') {
+            setErroSenha("Senha Inválida");
         } else {
-            setErroSenha("")
+            setErroSenha("");
         }
-        if (nome == '') {
-            setErroNome("Nome Invalido")
+    
+        if (nome === '') {
+            setErroNome("Nome Inválido");
         } else {
-            setErroNome("")
+            setErroNome("");
         }
-
-
-
-        regex.test(email) && senha && nome ? cadastrar(user) : null
-
-
+    
+        if (!regex.test(email) || senha === '' || nome === '') {
+            setCarregando(false);
+            return;
+        }
+    
+    
+        const q = query(collection(db, "Usuario"), where("email", "==", email));
+        const querySnapshot = await getDocs(q);
+    
+        if (querySnapshot.size > 0) {
+            setErro("Este e-mail já está em uso.");
+            setCarregando(false)
+        } else {
+            setErro("");
+            cadastrar(user);
+        }
     }
-
-    async function cadastrar(user) {
   
-   
+    async function cadastrar(user) {
         try {
-      
-          const response = await api.post("/user",user)
-          
-         if (response.data.hasOwnProperty('erro')) {
-           setErro(response.data.erro)
-         }
-      
-      } catch (error) {
-      
-          console.error('Error:', error.message);
-      
-      }
-    }
+            const docRef = await addDoc(clienteCollection, user);
+            Alert.alert("Criado com sucesso");
+            Navigator.navigate("Login");
+            setCarregando(false);
+
+          } catch (error) {
+            console.error("Erro ao adicionar o documento:", error);
+            setCarregando(false);
+          }
+         
+          };
 
     function logar() {
         Navigator.navigate('Login')
@@ -78,38 +92,38 @@ export default function FormLogin() {
 
     return (
         <View style={styles.container}>
-
-            <Image source={require('../../images/logo.png')}
-                style={styles.logo} />
+            <Image source={require('../../images/logo.png')} style={styles.logo} />
             <Text style={styles.titulo}>EducaMoney</Text>
-
-
             <View style={styles.form}>
-                <Text style={styles.o}>Cadastre-se!</Text>
-                {erro && <Text style={[styles.erroLogin]}>{erro}</Text>}
-                <ScrollView>
-                    <Text style={styles.label}>Nome</Text>
-                    <TextInput style={styles.input} onChangeText={(text) => setUser({ ...user, nome: text })} value={user.nome} />
-                    <Text style={styles.erro}>{erroNome}</Text>
-                    <Text style={styles.label}>E-mail</Text>
-                    <TextInput style={styles.input} onChangeText={(text) => setUser({ ...user, email: text })} value={user.email} />
-                    <Text style={styles.erro}>{erroEmail}</Text>
-                    <Text style={styles.label}>Senha</Text>
-                    <TextInput style={styles.input} secureTextEntry={verSenha} onChangeText={(text) => setUser({ ...user, senha: text })} value={user.senha} />
-                    <TouchableOpacity style={styles.icon} onPress={trocaIcone}>
-                        <Ionicons name={icone} size={28} color="black" />
-                    </TouchableOpacity>
-                    <Text style={[styles.erro, { position: 'relative', bottom: 30 }]}>{erroSenha}</Text>
-                    <TouchableOpacity onPress={validar} style={styles.button}>
-                        <Text style={styles.textButton} >Cadastrar
-                        </Text>
-                    </TouchableOpacity>
-
-                    <Text style={styles.logar} > Ja possui conta? Entre <Text style={styles.link} onPress={logar}>aqui</Text></Text>
-
-                </ScrollView>
+                {carregando ? (
+                    <View style={styles.loadingContainer}>
+                        <ActivityIndicator color={'#3D5E3D'} size={50}></ActivityIndicator>
+                    </View>
+                ) : (
+                    <>
+                        <Text style={styles.o}>Cadastre-se!</Text>
+                        {erro && <Text style={[styles.erroLogin]}>{erro}</Text>}
+                        <ScrollView>
+                            <Text style={styles.label}>Nome</Text>
+                            <TextInput style={styles.input} onChangeText={(text) => setUser({ ...user, nome: text })} value={user.nome} />
+                            <Text style={styles.erro}>{erroNome}</Text>
+                            <Text style={styles.label}>E-mail</Text>
+                            <TextInput style={styles.input} onChangeText={(text) => setUser({ ...user, email: text })} value={user.email} />
+                            <Text style={styles.erro}>{erroEmail}</Text>
+                            <Text style={styles.label}>Senha</Text>
+                            <TextInput style={styles.input} secureTextEntry={verSenha} onChangeText={(text) => setUser({ ...user, senha: text })} value={user.senha} />
+                            <TouchableOpacity style={styles.icon} onPress={trocaIcone}>
+                                <Ionicons name={icone} size={28} color="black" />
+                            </TouchableOpacity>
+                            <Text style={[styles.erro, { position: 'relative', bottom: 30 }]}>{erroSenha}</Text>
+                            <TouchableOpacity onPress={validar} style={styles.button}>
+                                <Text style={styles.textButton}>Cadastrar</Text>
+                            </TouchableOpacity>
+                            <Text style={styles.logar}>Ja possui conta? Entre <Text style={styles.link} onPress={logar}>aqui</Text></Text>
+                        </ScrollView>
+                    </>
+                )}
             </View>
-
         </View>
     )
 }
@@ -172,6 +186,11 @@ const styles = StyleSheet.create({
         marginHorizontal: 32,
         flexDirection: 'row',
         borderRadius: 10
+    },
+    loadingContainer:{
+        flex:1,
+        alignItems:'center',
+        justifyContent:'center'
     },
     textButton: {
         color: '#fff',

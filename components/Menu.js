@@ -1,12 +1,17 @@
 import React from 'react';
 import { Text, View, StyleSheet, ScrollView, TouchableOpacity,Image } from 'react-native';
-import { FontAwesome } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 
 
 export const Menu = ({ route }) => {
   const nome =  route.params.nome;
+  const Navigator = useNavigation();
 
-
+  function acessar(menu) {
+  Navigator.navigate(menu);
+   
+    
+  }
   return (
    <ScrollView>
      <View style={styles.container}>
@@ -18,7 +23,7 @@ export const Menu = ({ route }) => {
        <TouchableOpacity>
         <View  style={styles.menu}>
         <Image  source={require('../assets/menu/icon-user.png')} style={{width:45,height:45}}/>
-        <Text style={styles.tituloMenu}>Usuario</Text>
+        <Text>Usuario</Text>
         </View>
        </TouchableOpacity>
        <TouchableOpacity>
@@ -35,7 +40,7 @@ export const Menu = ({ route }) => {
         <Text>Puzzle</Text>
         </View>
        </TouchableOpacity>
-       <TouchableOpacity>
+       <TouchableOpacity  onPress={()=>acessar('Aula')}>
         <View  style={styles.menu}>
         <Image  source={require('../assets/menu/icon-aulas.png')} style={{width:39,height:61}}/>
          
