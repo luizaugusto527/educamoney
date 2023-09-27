@@ -1,46 +1,72 @@
-﻿import { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, TextInput,ActivityIndicator,Alert } from 'react-native';
+import { useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView, TextInput,ActivityIndicator } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { FontAwesome5 } from '@expo/vector-icons';
-import { getFirestore, collection, addDoc, query, where, getDocs } from 'firebase/firestore';
+import { FontAwesome, FontAwesome5,Ionicons } from '@expo/vector-icons';
+import { getFirestore, collection, doc, updateDoc, deleteDoc} from 'firebase/firestore';
 import firebaseApp from '../config';
 
 const db = getFirestore(firebaseApp);
 const clienteCollection = collection(db, "Aula");
 
-export default function AulaForm() {
+export default function AulaDetalhe({ route }) {
+
     const Navigator = useNavigation();
     const [carregando, setCarregando] = useState(false)
     const [erro, setErro] = useState(false)
-    const [aula, setAula] = useState({ titulo: "", descricao: "", duracao: "", url: "" })
+    const [aula, setAula] = useState(route.params)
+    const [operacao,setOperacao] =  useState("Atualizada")
+    const [isVisible, setIsVisible] = useState(false);
+    const [isVisibleError, setIsVisibleError] = useState(false);
 
-    async function cadastrar(aula) {
-        try {
-            const docRef = await addDoc(clienteCollection, aula);
-            Alert.alert("Aula criada com sucesso");
-            Navigator.navigate("Login");
-            setCarregando(false);
+    const toggleVisibility = (excluida) => {
+        if (excluida)
+        setOperacao("Excluida");
+        setIsVisible(!isVisible);
+      };
+    const toggleVisibilityError = (excluida) => {
+        if (excluida)
+        setOperacao("Excluir");
+        excluida ? Navigator.navigate("Aula") : null
+        setIsVisibleError(!isVisibleError);
+      };
 
-        } catch (error) {
-            console.error("Erro ao adicionar o documento:", error);
-            setCarregando(false);
-        }
-
-    };
-
-
-
-    async function cadastrar() {
+    async function atualizar() {
         setCarregando(true);
         try {
-            const docRef = await addDoc(clienteCollection, aula);
-            Alert.alert("Criado com sucesso");
-            Navigator.navigate("Aula");
+            const docRef = doc(db, 'Aula', aula.id);
+
+            const camposAtualizados = {
+                titulo: aula.titulo,
+                descricao: aula.descricao,
+                duracao: aula.duracao,
+                url: aula.url
+              };
+        
+            
+            await updateDoc(docRef, camposAtualizados);
             setCarregando(false);
+            toggleVisibility();
 
           } catch (error) {
-            console.error("Erro ao adicionar o documento:", error);
+            console.error("Erro ao atualizar a aula:", error);
             setCarregando(false);
+          }
+         
+    }
+    async function excluir() {
+        setCarregando(true);
+        try {
+            const docRef = doc(db, 'Aula', aula.id);
+
+
+            await deleteDoc(docRef);
+            setCarregando(false);
+            toggleVisibility(true);
+
+          } catch (error) {
+            console.error("Erro ao atualizar a aula:", error);
+            setCarregando(false);
+            toggleVisibilityError(true);
           }
          
     }
@@ -60,7 +86,7 @@ export default function AulaForm() {
                     </View>
                 ) : (
                     <>
-                        <Text style={styles.o}>Cadastrar uma aula!</Text>
+                        <Text style={styles.o}>Aula</Text>
                         {erro && <Text style={[styles.erroLogin]}>{erro}</Text>}
                         <ScrollView>
                             <Text style={styles.label}>Titulo</Text>
@@ -70,13 +96,30 @@ export default function AulaForm() {
                             <TextInput style={styles.input} onChangeText={(text) => setAula({ ...aula, duracao: text })} value={aula.duracao} />
                              {/* <Text style={styles.erro}>{erroEmail}</Text>  */}
                             <Text style={styles.label}>Descrição</Text>
-                            <TextInput style={styles.input} onChangeText={(text) => setAula({ ...aula, descricao: text })} value={aula.descricao} />
+                            <TextInput style={styles.input} multiline={true}  numberOfLines={10}  onChangeText={(text) => setAula({ ...aula, descricao: text })} value={aula.descricao} />
                             <Text style={styles.label}>URL</Text>
                             <TextInput style={styles.input} onChangeText={(text) => setAula({ ...aula, url: text })} value={aula.url} />
                             <Text style={[styles.erro, { position: 'relative', bottom: 30 }]}></Text>
-                            <TouchableOpacity onPress={cadastrar} style={styles.button}>
-                                <Text style={styles.textButton}>Cadastrar</Text>
-                            </TouchableOpacity>
+                           <View style={styles.botoesArea}>
+                            <TouchableOpacity onPress={atualizar} style={styles.button}>
+                                    <Text style={styles.textButton}>Atualizar</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={excluir} style={[styles.button,{backgroundColor: '#FF4500'}]}>
+                                    <Text style={styles.textButton}>Excluir</Text>
+                                </TouchableOpacity>
+                           </View>
+                           {isVisible && 
+                           <View style={styles.box}>
+                                <FontAwesome name='check' size={60} color='#0BAC00' />
+                                <Text style={styles.textBox}>Aula {operacao} com sucesso!!!</Text>
+                                <TouchableOpacity onPress={toggleVisibility} style={styles.boxOk}><Text style={styles.textBox}>OK</Text></TouchableOpacity>
+                            </View>}
+                           {isVisibleError && 
+                           <View style={styles.box}>
+                                <Ionicons name="close-circle-outline" size={80} color='#FF4500' />
+                                <Text style={styles.textBox}>Erro ao {operacao}!!!</Text>
+                                <TouchableOpacity onPress={toggleVisibilityError} style={styles.boxOk}><Text style={styles.textBox}>OK</Text></TouchableOpacity>
+                            </View>}
                         </ScrollView>
                     </>
                 )}
@@ -131,9 +174,13 @@ const styles = StyleSheet.create({
         marginHorizontal: 24,
         marginTop: 24
     },
+    botoesArea:{
+        justifyContent:'space-around',
+        flexDirection:'row'
+    },
     button: {
         marginTop: 50,
-        width: 315,
+        width: 150,
         height: 54,
         backgroundColor: '#3D5E3D',
         justifyContent: 'center',
@@ -200,6 +247,24 @@ const styles = StyleSheet.create({
     link: {
         color: 'blue',
         textDecorationLine: 'underline'
+    },
+    box:{
+        width: 350,
+        height: 200,
+        backgroundColor: 'white',
+        position:'absolute',
+        marginTop:100,
+        marginHorizontal:25,
+        justifyContent:'center',
+        alignItems:'center',
+        borderWidth:1,
+        borderRadius:25
+    },
+    textBox:{
+        fontSize:19
+    },
+    boxOk:{
+        marginTop:10
     }
 
 })

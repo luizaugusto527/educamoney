@@ -6,6 +6,8 @@ import Cadastro from './components/forms/Cadastro';
 import { Menu } from './components/Menu';
 import Aula from './components/Aula';
 import AulaForm from './components/AulaForm';
+import AulaDetalhe from './components/AulaDetalhe';
+import UsuarioForm from './components/UsuarioForm';
 
 export default function App() {
   const Stack = createNativeStackNavigator();
@@ -17,6 +19,8 @@ export default function App() {
             <Stack.Screen name='Menu' component={Menu} />
             <Stack.Screen name='Aula' component={Aula} />
             <Stack.Screen name='AulaForm' component={AulaForm} />
+            <Stack.Screen name='AulaDetalhe' component={AulaDetalhe} />
+            <Stack.Screen name='UsuarioForm' component={UsuarioForm} />
           </Stack.Navigator>
       </NavigationContainer>
   );

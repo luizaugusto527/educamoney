@@ -4,12 +4,16 @@ import { useNavigation } from '@react-navigation/native';
 
 
 export default function AulasList({ item }) {
-    
+
         
     const Navigator = useNavigation();
 
+    function aulaDetalhe() {
+        Navigator.navigate("AulaDetalhe",item);
+    }
+
     return (
-        <TouchableOpacity>
+        <TouchableOpacity onPress={aulaDetalhe}>
             <View style={styles.card}>
                 <Text style={styles.titulo}>{item.titulo}</Text>
                 <Text style={styles.duracao}>  <FontAwesome5 style={styles.duracao} name='clock' size={13} color='black' /> {item.duracao}:00 minutos</Text>
@@ -24,7 +28,8 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderRadius: 10,
         width: 350,
-        height: 130
+        height: 130,
+        marginBottom:20
     },
     titulo: {
         marginTop: 10,

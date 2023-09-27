@@ -8,7 +8,13 @@ export const Menu = ({ route }) => {
   const Navigator = useNavigation();
 
   function acessar(menu) {
-  Navigator.navigate(menu);
+    if (menu == "UsuarioForm") {
+      Navigator.navigate(menu,route.params);
+    }
+    else{
+      Navigator.navigate(menu);
+      
+    }
    
     
   }
@@ -20,7 +26,7 @@ export const Menu = ({ route }) => {
         <View style={styles.logo}></View>
       </View> 
       <View style={styles.branco}>
-       <TouchableOpacity>
+       <TouchableOpacity onPress={()=>acessar('UsuarioForm')}>
         <View  style={styles.menu}>
         <Image  source={require('../assets/menu/icon-user.png')} style={{width:45,height:45}}/>
         <Text>Usuario</Text>
