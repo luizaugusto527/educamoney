@@ -22,6 +22,7 @@ export default function AulaDetalhe({ route }) {
         if (excluida)
         setOperacao("Excluida");
         setIsVisible(!isVisible);
+        excluida ? Navigator.goBack() : null
       };
     const toggleVisibilityError = (excluida) => {
         if (excluida)

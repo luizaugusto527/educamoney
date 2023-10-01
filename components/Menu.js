@@ -29,13 +29,13 @@ export const Menu = ({ route }) => {
        <TouchableOpacity onPress={()=>acessar('UsuarioForm')}>
         <View  style={styles.menu}>
         <Image  source={require('../assets/menu/icon-user.png')} style={{width:45,height:45}}/>
-        <Text>Usuario</Text>
+        <Text>Usuário</Text>
         </View>
        </TouchableOpacity>
        <TouchableOpacity>
         <View  style={styles.menu}>
         <Image  source={require('../assets/menu/icon-dollar.png')} style={{width:45,height:45}}/>
-          <Text>Usuario</Text>
+          <Text>Organizar gastos</Text>
         </View>
         
        </TouchableOpacity>
@@ -55,23 +55,9 @@ export const Menu = ({ route }) => {
        </TouchableOpacity>
        <TouchableOpacity>
         <View  style={styles.menu}>
-        <Image  source={require('../assets/menu/icon-organizacao.png')} style={{width:39,height:61}}/>
-         
-         <Text>Organizacao</Text>
-        </View>
-       </TouchableOpacity>
-       <TouchableOpacity>
-        <View  style={styles.menu}>
         <Image  source={require('../assets/menu/icon-duvida.png')} style={{width:47,height:55}}/>
          
          <Text>Duvida</Text>
-        </View>
-       </TouchableOpacity>
-       <TouchableOpacity>
-        <View  style={styles.menu}>
-        <Image  source={require('../assets/menu/icon-mudarsenha.png')} style={{width:47,height:55}}/>
-         
-         <Text>Mudar Senha</Text>
         </View>
        </TouchableOpacity>
        <TouchableOpacity>
