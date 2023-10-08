@@ -9,6 +9,7 @@ import AulaForm from './components/AulaForm';
 import AulaDetalhe from './components/AulaDetalhe';
 import UsuarioForm from './components/UsuarioForm';
 import AulaVideo from './components/AulaVideo';
+import Organizar from './components/Organizar';
 
 export default function App() {
   const Stack = createNativeStackNavigator();
@@ -23,6 +24,7 @@ export default function App() {
             <Stack.Screen name='AulaDetalhe' component={AulaDetalhe} />
             <Stack.Screen name='UsuarioForm' component={UsuarioForm} />
             <Stack.Screen name='AulaVideo' component={AulaVideo} />
+            <Stack.Screen name='Organizar' component={Organizar} />
           </Stack.Navigator>
       </NavigationContainer>
   );

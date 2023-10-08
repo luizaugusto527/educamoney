@@ -32,7 +32,7 @@ export const Menu = ({ route }) => {
         <Text>Usuário</Text>
         </View>
        </TouchableOpacity>
-       <TouchableOpacity>
+       <TouchableOpacity onPress={()=>acessar('Organizar')} >
         <View  style={styles.menu}>
         <Image  source={require('../assets/menu/icon-dollar.png')} style={{width:45,height:45}}/>
           <Text>Organizar gastos</Text>
