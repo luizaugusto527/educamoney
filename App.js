@@ -10,12 +10,14 @@ import AulaDetalhe from './components/AulaDetalhe';
 import UsuarioForm from './components/UsuarioForm';
 import AulaVideo from './components/AulaVideo';
 import Organizar from './components/Organizar';
+import OrganizacaoDetalhe from './components/OrganizacaoDetalhe';
+import OrganizacaoEditar from './components/OrganizacaoEditar';
 
 export default function App() {
   const Stack = createNativeStackNavigator();
   return (
       <NavigationContainer>
-          <Stack.Navigator initialRouteName='login' screenOptions={{headerShown:false}}>
+          <Stack.Navigator initialRouteName='Login' screenOptions={{headerShown:false}}>
             <Stack.Screen name='Login' component={Login} />
             <Stack.Screen name='Cadastro' component={Cadastro} />
             <Stack.Screen name='Menu' component={Menu} />
@@ -25,6 +27,8 @@ export default function App() {
             <Stack.Screen name='UsuarioForm' component={UsuarioForm} />
             <Stack.Screen name='AulaVideo' component={AulaVideo} />
             <Stack.Screen name='Organizar' component={Organizar} />
+            <Stack.Screen name='OrganizacaoDetalhe' component={OrganizacaoDetalhe} />
+            <Stack.Screen name='OrganizacaoEditar' component={OrganizacaoEditar} />
           </Stack.Navigator>
       </NavigationContainer>
   );

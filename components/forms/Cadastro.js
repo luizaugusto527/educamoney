@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { getFirestore, collection, addDoc, query, where, getDocs } from 'firebase/firestore';
 import firebaseApp from '../../config'; 
+import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 
 const db = getFirestore(firebaseApp);
 
@@ -75,6 +76,8 @@ export default function FormLogin() {
     async function cadastrar(user) {
         try {
             const docRef = await addDoc(clienteCollection, user);
+            const auth = getAuth(firebaseApp); 
+            await createUserWithEmailAndPassword(auth, user.email, user.senha); 
             Alert.alert("Criado com sucesso");
             Navigator.navigate("Login");
             setCarregando(false);

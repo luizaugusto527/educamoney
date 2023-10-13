@@ -6,7 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 
 export default function FormLogin({ onLogin, erro }) {
   const [verSenha, setVersenha] = useState(true)
-  const [login, setLogin] = useState({ email: "teste@teste.com", senha: "123" })
+  const [login, setLogin] = useState({ email: "teste@teste.com", senha: "123456" })
   const [erroEmail, setErroEmail] = useState("")
   const [erroSenha, setErroSenha] = useState("")
 

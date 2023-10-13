@@ -17,6 +17,7 @@ export default function AulaForm() {
     async function cadastrar(aula) {
         try {
             const docRef = await addDoc(clienteCollection, aula);
+           firebaseApp.auth().signInWithEmailAndPassword(user.email, user.password)
             Alert.alert("Aula criada com sucesso");
             Navigator.navigate("Login");
             setCarregando(false);

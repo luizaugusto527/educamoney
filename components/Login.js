@@ -1,6 +1,11 @@
 import React, { useState } from "react";
-import { StyleSheet, View, ActivityIndicator,Image,Text } from 'react-native';
+import { StyleSheet, View, ActivityIndicator, Image, Text } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import firebaseApp from '../config'; 
+import { getFirestore, collection, query, where, getDocs } from 'firebase/firestore';
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+
+
 
 import FormLogin from "./forms/FormLogin";
 import api from "../services/api";
@@ -8,54 +13,54 @@ import api from "../services/api";
 
 export default function Login() {
   const [carregando, setCarregando] = useState(false)
-  const [erro,setErro] = useState(null)
+  const [erro, setErro] = useState(null)
 
   const Navigator = useNavigation();
 
   async function logar(login) {
+    setCarregando(true);
+    try {
+      const auth = getAuth(firebaseApp);
+      await signInWithEmailAndPassword(auth, login.email, login.senha);
+     
+
+      const db = getFirestore(firebaseApp);
+      const usuarioCollection = collection(db, "Usuario");
   
-   
-     try {
-      setCarregando(true)
-       const response = await api.post("/login",login)
+      const q = query(usuarioCollection, where("email", "==", login.email));
+      const querySnapshot = await getDocs(q);
+  
+      if (querySnapshot.size > 0) {
+        querySnapshot.forEach((doc) => {
+          const usuarioData = doc.data();
+          setCarregando(false)
+          Navigator.navigate("Menu",usuarioData)
        
-      if (response.data.hasOwnProperty('erro')) {
-        setErro(response.data.erro)
-      }else{
-        let user = response.data
-       
-        Navigator.navigate("Menu",user)
+        });
       }
-        
-       
 
-      
-
+    } catch (error) {
       setCarregando(false)
-   
-   } catch (error) {
-   
-       console.error('Error:', error.message);
-   
-   }
-   
+      console.log(error);
+    }
   }
+
   return (
-      <View style={styles.container}>
-       
-    <Image source={require('../images/logo.png')}
-      style={styles.logo} />
-     <Text style={styles.titulo}>EducaMoney</Text>
- 
-      <View style={[styles.form, carregando ? {flex:1,justifyContent:'center',alignItems:'center' } : null]}>
-      {carregando ?  <ActivityIndicator color={'#3D5E3D'} size={50} ></ActivityIndicator> :
-        <FormLogin onLogin={logar} erro={erro} />
-      }
+    <View style={styles.container}>
+
+      <Image source={require('../images/logo.png')}
+        style={styles.logo} />
+      <Text style={styles.titulo}>EducaMoney</Text>
+
+      <View style={[styles.form, carregando ? { flex: 1, justifyContent: 'center', alignItems: 'center' } : null]}>
+        {carregando ? <ActivityIndicator color={'#3D5E3D'} size={50} ></ActivityIndicator> :
+          <FormLogin onLogin={logar} erro={erro} />
+        }
+
+      </View>
 
     </View>
 
-      </View>
-  
   )
 }
 
@@ -105,6 +110,6 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 40,
     borderTopRightRadius: 40
   }
- 
+
 
 });
