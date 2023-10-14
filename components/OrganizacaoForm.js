@@ -4,26 +4,28 @@ import { useNavigation } from '@react-navigation/native';
 import { FontAwesome,FontAwesome5, Ionicons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { RadioButton } from 'react-native-paper';
-import { getFirestore, collection, doc, updateDoc, deleteDoc } from 'firebase/firestore';
+import { getFirestore, collection,addDoc  } from 'firebase/firestore';
 import firebaseApp from '../config';
 import { format } from 'date-fns';
 
 const db = getFirestore(firebaseApp);
-const clienteCollection = collection(db, "organizacao");
+const clienteCollection = collection(db, "Organizacao");
 
-export default function OrganizacaoEditar({ route }) {
+export default function OrganizacaoForm() {
 
     const Navigator = useNavigation();
     const [carregando, setCarregando] = useState(false);
     const [date, setDate] = useState(new Date());
     const [erro, setErro] = useState(false);
     const [showData, setShowData] = useState(false);
-    const [organizacao, setOrganizacao] = useState(route.params);
-    const [operacao, setOperacao] = useState("Atualizada");
+    const [organizacao, setOrganizacao] = useState({descricao:'',data:new Date(),valor:'',tipo:''});
+    const [operacao, setOperacao] = useState("Criada");
     const [isVisible, setIsVisible] = useState(false);
     const [isVisibleError, setIsVisibleError] = useState(false);
 
-  
+  function teste() {
+    console.log('aaa');
+  }
     const toggleVisibility = (excluida) => {
         if (excluida)
             setOperacao("Excluida");
@@ -38,49 +40,26 @@ export default function OrganizacaoEditar({ route }) {
         setIsVisibleError(!isVisibleError);
     };
 
-    async function atualizar() {
+    async function cadastrar() {
         setCarregando(true);
         try {
             if (typeof organizacao.data == 'object') {
                 organizacao.data = organizacao.data.toISOString().slice(0, 10)
             }
-            const docRef = doc(db, 'Organizacao', organizacao.id);
-            const camposAtualizados = {
-                id:organizacao.id,
-                data: organizacao.data,
-                descricao: organizacao.descricao,
-                valor: organizacao.valor,
-                tipo: organizacao.tipo
-            };
 
-            await updateDoc(docRef, camposAtualizados);
+            const docRef = await addDoc(clienteCollection, organizacao);
+            setIsVisible(true)
             setCarregando(false);
-            toggleVisibility();
 
-        } catch (error) {
-            console.error("Erro ao atualizar a organizacao:", error);
+          } catch (error) {
+            console.error("Erro ao adicionar o documento:", error);
             setCarregando(false);
-            setOperacao("Atualizar");
-            setIsVisibleError(!isVisibleError);
-        }
+          }
+         
 
     }
 
-    async function excluir() {
-        setCarregando(true);
-        try {
-            const docRef = doc(db, 'Organizacao', organizacao.id);
 
-            await deleteDoc(docRef);
-            setCarregando(false);
-            toggleVisibility(true);
-
-        } catch (error) {
-            console.error("Erro ao atualizar a organizacao:", error);
-            setCarregando(false);
-            toggleVisibilityError(true);
-        }
-    }
 
     function showModalDate() {
         setShowData(true);
@@ -160,12 +139,10 @@ export default function OrganizacaoEditar({ route }) {
                                 </View>
                             </RadioButton.Group>
                             <View style={styles.botoesArea}>
-                                <TouchableOpacity onPress={atualizar} style={styles.button}>
-                                    <Text style={styles.textButton}>Atualizar</Text>
+                                <TouchableOpacity onPress={cadastrar} style={styles.button}>
+                                    <Text style={styles.textButton}>Cadastrar</Text>
                                 </TouchableOpacity>
-                                <TouchableOpacity onPress={excluir} style={[styles.button, { backgroundColor: '#FF4500' }]}>
-                                    <Text style={styles.textButton}>Excluir</Text>
-                                </TouchableOpacity>
+                           
                             </View>
                             {isVisible &&
                                 <View style={styles.box}>
@@ -246,7 +223,7 @@ const styles = StyleSheet.create({
     },
     button: {
         marginTop: 50,
-        width: 150,
+        width: 315,
         height: 54,
         backgroundColor: '#3D5E3D',
         justifyContent: 'center',

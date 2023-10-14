@@ -1,51 +1,67 @@
 import React, { useState, useEffect } from 'react';
 import { Text, View, StyleSheet, TouchableOpacity, ActivityIndicator, FlatList } from 'react-native';
-import  {format} from 'date-fns';
-import { FontAwesome5 } from '@expo/vector-icons';
+import { format } from 'date-fns';
+import { FontAwesome5, FontAwesome } from '@expo/vector-icons';
 import OrganizacaoList from './OrganizacaoList';
-import { getFirestore, collection, query, getDocs,where } from 'firebase/firestore';
+import { useFocusEffect } from '@react-navigation/native';
+import { getFirestore, collection, query, getDocs, where } from 'firebase/firestore';
 import firebaseApp from '../config';
 
 const db = getFirestore(firebaseApp);
 
-export default function OrganizacaoDetalhe({route}) {
- const date = route.params
- const dataBr =  format(new Date(date), 'dd/MM/yyyy');
+export default function OrganizacaoDetalhe({ route }) {
+  const date = route.params
+  const dataBr = format(new Date(date), 'dd/MM/yyyy');
 
- const [organizacao, setOrganizacao] = useState('')
- const [carregando, setCarregando] = useState('')
+  const [organizacao, setOrganizacao] = useState('')
 
- useEffect(() => {
-  fetchData();
-}, []);
+  const [excluir, setExcluir] = useState(false);
+  const [carregando, setCarregando] = useState(false)
+  const [isVisibleError, setIsVisibleError] = useState(false);
+  const [operacao, setOperacao] = useState("Excluída")
 
+  const toggleVisibilityError = (excluida) => {
+    if (excluida)
+      setOperacao("Excluir");
+    excluida ? Navigator.navigate("Aula") : null
+    setIsVisibleError(!isVisibleError);
+  };
 
+  useEffect(() => {
+    fetchData();
+  }, []);
 
-const fetchData = async () => {
-  try {
-    setCarregando(true);
-    const q = query(collection(db, 'Organizacao'), where('data', '==', date));
-    const querySnapshot = await getDocs(q);
-    const aulasData = [];
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchData();
+    }, [])
+  );
 
-    querySnapshot.forEach((doc) => {
-      const data = doc.data();
-      aulasData.push({
-        id: doc.id,
-        descricao: data.descricao,
-        data: data.data,
-        valor: data.valor,
-        tipo: data.tipo,
+  const fetchData = async () => {
+    try {
+      setCarregando(true);
+      const q = query(collection(db, 'Organizacao'), where('data', '==', date));
+      const querySnapshot = await getDocs(q);
+      const aulasData = [];
+
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        aulasData.push({
+          id: doc.id,
+          descricao: data.descricao,
+          data: data.data,
+          valor: data.valor,
+          tipo: data.tipo,
+        });
       });
-    });
 
-    setOrganizacao(aulasData);
-    setCarregando(false);
-  } catch (error) {
-    console.error('Erro ao buscar dados:', error);
-    setCarregando(false);
-  }
-};
+      setOrganizacao(aulasData);
+      setCarregando(false);
+    } catch (error) {
+      console.error('Erro ao buscar dados:', error);
+      setCarregando(false);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -59,14 +75,15 @@ const fetchData = async () => {
         </View>
       </View>
       <View style={styles.branco}>
-      <Text style={styles.o}>Receitas/Despesas - {dataBr}</Text>
-      {carregando ? <ActivityIndicator size={50} color={'#3D5E3D'} style={{marginTop:100}}></ActivityIndicator>
+        <Text style={styles.o}>Receitas/Despesas - {dataBr}</Text>
+        {carregando ? <ActivityIndicator size={50} color={'#3D5E3D'} style={{ marginTop: 100 }}></ActivityIndicator>
           : <FlatList
             showsHorizontalScrollIndicator={true}
             data={organizacao}
-            renderItem={({ item }) => <OrganizacaoList item={item} />}
+            renderItem={({ item }) => <OrganizacaoList item={item}  />}
           />
         }
+     
       </View>
     </View>
   );
@@ -96,7 +113,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Roboto',
     marginTop: 19
 
-},
+  },
   voltar: {
     marginBottom: 20,
     marginLeft: 10,
@@ -108,4 +125,27 @@ const styles = StyleSheet.create({
     color: 'white',
     fontFamily: 'Roboto',
   },
+  modal: {
+    justifyContent: 'flex-end'
+  },
+  box: {
+    width: 1250,
+    height: 150,
+    zIndex:99,
+    backgroundColor: 'white',
+    borderWidth: 1,
+    borderRadius: 25,
+
+  },
+  textBox: {
+    textAlign: 'center',
+    fontSize: 15
+  },
+  boxOk: {
+    marginTop: 10
+  },
+  boxBotoes:{
+    flexDirection:'row',
+    gap:16
+  }
 });

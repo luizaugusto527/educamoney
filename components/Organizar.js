@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
-import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { Text, View, StyleSheet, TouchableOpacity, Modal } from 'react-native';
 import { Calendar, LocaleConfig } from 'react-native-calendars';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import { getFirestore, collection, query, where, getDocs } from 'firebase/firestore';
+import firebaseApp from '../config';
 
-
+const db = getFirestore(firebaseApp);
 LocaleConfig.locales['pt-br'] = {
     monthNames: [
         'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
@@ -24,13 +26,42 @@ LocaleConfig.locales['pt-br'] = {
 LocaleConfig.defaultLocale = 'pt-br';
 
 export default function Organizar() {
+    const [carregando, setCarregando] = useState(false)
+    const [organizacao, setOrganizacao] = useState()
+
+    useEffect(() => {
+        fetchData();
+    }, []);
+
+    const fetchData = async () => {
+        try {
+            setCarregando(true);
+            const q = query(collection(db, 'Organizacao'));
+            const querySnapshot = await getDocs(q);
+            const datas = [];
+
+            querySnapshot.forEach((doc) => {
+                const data = doc.data().data;
+                datas.push(data);
+            });
+
+            setOrganizacao(datas);
+
+            setCarregando(false);
+        } catch (error) {
+            console.error('Erro ao buscar dados:', error);
+            setCarregando(false);
+        }
+    };
+
+    const markedDates = {};
+
+    organizacao.forEach(data => {
+        markedDates[data] = { marked: true, selected: true, selectedColor: 'green' };
+    });
     const Navigator = useNavigation();
 
-    const markedDates = {
-        '2023-10-15': { marked: true, selected: true, selectedColor: 'green' },
-        [setDate]: { selected: true, selectedColor: "yellow", selectedTextColor: "black" },
 
-    };
     const [date, setDate] = useState('');
     const renderCustomHeader = (date) => {
 
@@ -60,7 +91,10 @@ export default function Organizar() {
         );
     }
     const organizacaolist = () => {
-        Navigator.navigate("OrganizacaoDetalhe",date)
+        Navigator.navigate("OrganizacaoDetalhe", date)
+    }
+    const organizacaoForm = () => {
+        Navigator.navigate("OrganizacaoForm")
     }
 
     return (
@@ -87,6 +121,10 @@ export default function Organizar() {
                 <TouchableOpacity style={styles.organizacaoButton} onPress={organizacaolist}>
                     <Text style={styles.organizacaoButtonText}>Verificar Receitas / Despesas</Text>
                 </TouchableOpacity>
+                <TouchableOpacity style={styles.organizacaoButton} onPress={organizacaoForm}>
+                    <Text style={styles.organizacaoButtonText}>Criar Receitas / Despesas</Text>
+                </TouchableOpacity>
+
             </View>
         </View>
     );

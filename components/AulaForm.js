@@ -14,21 +14,7 @@ export default function AulaForm() {
     const [erro, setErro] = useState(false)
     const [aula, setAula] = useState({ titulo: "", descricao: "", duracao: "", url: "" })
 
-    async function cadastrar(aula) {
-        try {
-            const docRef = await addDoc(clienteCollection, aula);
-           firebaseApp.auth().signInWithEmailAndPassword(user.email, user.password)
-            Alert.alert("Aula criada com sucesso");
-            Navigator.navigate("Login");
-            setCarregando(false);
-
-        } catch (error) {
-            console.error("Erro ao adicionar o documento:", error);
-            setCarregando(false);
-        }
-
-    };
-
+    
 
 
     async function cadastrar() {
@@ -78,6 +64,7 @@ export default function AulaForm() {
                             <TouchableOpacity onPress={cadastrar} style={styles.button}>
                                 <Text style={styles.textButton}>Cadastrar</Text>
                             </TouchableOpacity>
+                            
                         </ScrollView>
                     </>
                 )}

@@ -61,7 +61,7 @@ export default function UsuarioForm({ route }) {
                     </View>
                 ) : (
                     <>
-                        <Text style={styles.o}>Aula</Text>
+                        <Text style={styles.o}>Usuário</Text>
                         {erro && <Text style={[styles.erroLogin]}>{erro}</Text>}
                         <ScrollView>
                             <Text style={styles.label}>Nome</Text>
