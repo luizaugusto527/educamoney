@@ -32,8 +32,8 @@ export default function Login() {
   
       if (querySnapshot.size > 0) {
         querySnapshot.forEach((doc) => {
-          const usuarioData = doc.data();
-          setCarregando(false)
+          let usuarioData = doc.data();
+          usuarioData.id = doc.id;
           Navigator.navigate("Menu",usuarioData)
        
         });

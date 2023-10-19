@@ -1,9 +1,13 @@
-import { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView, TextInput,ActivityIndicator } from 'react-native';
+import { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Button, ScrollView, TextInput, ActivityIndicator, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { FontAwesome, FontAwesome5,Ionicons } from '@expo/vector-icons';
-import { getFirestore, collection, doc, updateDoc} from 'firebase/firestore';
-import firebaseApp from '../config';
+import { FontAwesome, FontAwesome5, Ionicons } from '@expo/vector-icons';
+import { getFirestore, collection, doc, updateDoc } from 'firebase/firestore';
+import firebaseApp, { storage } from '../config';
+import * as ImagePicker from 'expo-image-picker';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+
+
 
 const db = getFirestore(firebaseApp);
 const clienteCollection = collection(db, "Usuario");
@@ -16,14 +20,61 @@ export default function UsuarioForm({ route }) {
     const [usuario, setUsuario] = useState(route.params)
     const [isVisible, setIsVisible] = useState(false);
     const [isVisibleError, setIsVisibleError] = useState(false);
+    const [imageUri, setImageUri] = useState(null);
+    const [image, setImage] = useState();
 
+    useEffect(() => {
+        // FunÁ„o para buscar a imagem do Firebase Storage
+        async function buscarImagem() {
+            try {
+                const storageRef = ref(storage, 'imageUris/' + usuario.id);
+                const imageUrl = await getDownloadURL(storageRef);
+                setImageUri(imageUrl);
+                console.log(imageUrl);
+            } catch (error) {
+
+                console.error("Erro ao buscar a imagem:", error);
+            }
+        }
+
+
+        buscarImagem();
+    }, [usuario.id]);
     const toggleVisibility = () => {
         setIsVisible(!isVisible);
-      };
+    };
     const toggleVisibilityError = () => {
         setIsVisibleError(!isVisibleError);
-      };
+    };
 
+    const pickImage = async () => {
+
+
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
+        });
+
+
+
+        if (!result.canceled) {
+            setImageUri(result.uri);
+        }
+    };
+    const uploadImage = async () => {
+        if (imageUri) {
+            const storageRef = ref(storage, `imageUris/${usuario.id}`);
+            try {
+                await uploadBytes(storageRef, imageUri,{contentType: 'image/jpeg'});
+                console.log('Image uploaded to Firebase Storage');
+
+            } catch (e) {
+                console.error('Error uploading image: ', e);
+            }
+        }
+    };
     async function atualizar() {
         setCarregando(true);
         try {
@@ -32,18 +83,18 @@ export default function UsuarioForm({ route }) {
             const camposAtualizados = {
                 email: usuario.email,
                 nome: usuario.nome
-              };
-        
-            
+            };
+
+
             await updateDoc(docRef, camposAtualizados);
             setCarregando(false);
             toggleVisibility();
 
-          } catch (error) {
+        } catch (error) {
             console.error("Erro ao atualizar a aula:", error);
             setCarregando(false);
-          }
-         
+        }
+
     }
     return (
         <View style={styles.container}>
@@ -55,41 +106,49 @@ export default function UsuarioForm({ route }) {
                     Inserir Aula</Text>
             </View>
             <View style={styles.form}>
+                <View style={styles.img}>
+                    <TouchableOpacity onPress={pickImage}>
+                        <View style={styles.avatar}>
+                            {imageUri && <Image source={{ uri: imageUri }} style={styles.imageInAvatar} />}
+                        </View>
+                    </TouchableOpacity>
+
+                    <Button style={styles.imgButton} title="Upload Image" onPress={uploadImage} />
+                </View>
                 {carregando ? (
                     <View style={styles.loadingContainer}>
                         <ActivityIndicator color={'#3D5E3D'} size={50}></ActivityIndicator>
                     </View>
                 ) : (
                     <>
-                        <Text style={styles.o}>Usu√°rio</Text>
                         {erro && <Text style={[styles.erroLogin]}>{erro}</Text>}
                         <ScrollView>
                             <Text style={styles.label}>Nome</Text>
                             <TextInput style={styles.input} onChangeText={(text) => setUsuario({ ...usuario, nome: text })} value={usuario.nome} />
-                             {/* <Text style={styles.erro}>{erroNome}</Text>  */}
+                            {/* <Text style={styles.erro}>{erroNome}</Text>  */}
                             <Text style={styles.label}>E-mail</Text>
                             <TextInput style={styles.input} onChangeText={(text) => setUsuario({ ...usuario, email: text })} value={usuario.email} />
-           
-                           <View style={styles.botoesArea}>
-                            <TouchableOpacity onPress={atualizar} style={styles.button}>
+
+                            <View style={styles.botoesArea}>
+                                <TouchableOpacity onPress={atualizar} style={styles.button}>
                                     <Text style={styles.textButton}>Atualizar</Text>
                                 </TouchableOpacity>
-                                <TouchableOpacity style={[styles.button,{backgroundColor: '#FF4500'}]}>
+                                <TouchableOpacity style={[styles.button, { backgroundColor: '#FF4500' }]}>
                                     <Text style={styles.textButton}>Excluir</Text>
                                 </TouchableOpacity>
-                           </View>
-                           {isVisible && 
-                           <View style={styles.box}>
-                                <FontAwesome name='check' size={60} color='#0BAC00' />
-                                <Text style={styles.textBox}>Aula atualizada com sucesso!!!</Text>
-                                <TouchableOpacity onPress={toggleVisibility} style={styles.boxOk}><Text style={styles.textBox}>OK</Text></TouchableOpacity>
-                            </View>}
-                           {isVisibleError && 
-                           <View style={styles.box}>
-                                <Ionicons name="close-circle-outline" size={80} color='#FF4500' />
-                                <Text style={styles.textBox}>Erro ao atualizar!!!</Text>
-                                <TouchableOpacity onPress={toggleVisibilityError} style={styles.boxOk}><Text style={styles.textBox}>OK</Text></TouchableOpacity>
-                            </View>}
+                            </View>
+                            {isVisible &&
+                                <View style={styles.box}>
+                                    <FontAwesome name='check' size={60} color='#0BAC00' />
+                                    <Text style={styles.textBox}>Aula atualizada com sucesso!!!</Text>
+                                    <TouchableOpacity onPress={toggleVisibility} style={styles.boxOk}><Text style={styles.textBox}>OK</Text></TouchableOpacity>
+                                </View>}
+                            {isVisibleError &&
+                                <View style={styles.box}>
+                                    <Ionicons name="close-circle-outline" size={80} color='#FF4500' />
+                                    <Text style={styles.textBox}>Erro ao atualizar!!!</Text>
+                                    <TouchableOpacity onPress={toggleVisibilityError} style={styles.boxOk}><Text style={styles.textBox}>OK</Text></TouchableOpacity>
+                                </View>}
                         </ScrollView>
                     </>
                 )}
@@ -144,9 +203,9 @@ const styles = StyleSheet.create({
         marginHorizontal: 24,
         marginTop: 24
     },
-    botoesArea:{
-        justifyContent:'space-around',
-        flexDirection:'row'
+    botoesArea: {
+        justifyContent: 'space-around',
+        flexDirection: 'row'
     },
     button: {
         marginTop: 50,
@@ -218,23 +277,45 @@ const styles = StyleSheet.create({
         color: 'blue',
         textDecorationLine: 'underline'
     },
-    box:{
+    box: {
         width: 350,
         height: 200,
         backgroundColor: 'white',
-        position:'absolute',
-        marginTop:100,
-        marginHorizontal:25,
-        justifyContent:'center',
-        alignItems:'center',
-        borderWidth:1,
-        borderRadius:25
+        position: 'absolute',
+        marginTop: 100,
+        marginHorizontal: 25,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderWidth: 1,
+        borderRadius: 25
     },
-    textBox:{
-        fontSize:19
+    textBox: {
+        fontSize: 19
     },
-    boxOk:{
-        marginTop:10
+    boxOk: {
+        marginTop: 10
+    },
+    img: {
+        width: 120,
+        marginTop: 50,
+        marginLeft: 120
+    },
+    avatar: {
+        width: 150,
+        height: 150,
+        borderWidth: 1,
+        borderRadius: 75,
+        overflow: 'hidden',
+        position: 'relative',
+    },
+
+    imageInAvatar: {
+        width: '100%',
+        height: '100%',
+        position: 'absolute',
+    },
+    imgButton: {
+        marginLeft: 40
     }
 
 })

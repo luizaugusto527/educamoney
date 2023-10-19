@@ -6,7 +6,6 @@ import { useNavigation } from '@react-navigation/native';
 export const Menu = ({ route }) => {
   const nome =  route.params.nome;
   const Navigator = useNavigation();
-
   function acessar(menu) {
     if (menu == "UsuarioForm") {
       Navigator.navigate(menu,route.params);
