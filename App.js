@@ -13,6 +13,7 @@ import Organizar from './components/Organizar';
 import OrganizacaoDetalhe from './components/OrganizacaoDetalhe';
 import OrganizacaoEditar from './components/OrganizacaoEditar';
 import OrganizacaoForm from './components/OrganizacaoForm';
+import Duvida from './components/Duvida';
 
 export default function App() {
   const Stack = createNativeStackNavigator();
@@ -31,6 +32,7 @@ export default function App() {
             <Stack.Screen name='OrganizacaoDetalhe' component={OrganizacaoDetalhe} />
             <Stack.Screen name='OrganizacaoEditar' component={OrganizacaoEditar} />
             <Stack.Screen name='OrganizacaoForm' component={OrganizacaoForm} />
+            <Stack.Screen name='Duvida' component={Duvida} />
           </Stack.Navigator>
       </NavigationContainer>
   );

@@ -27,10 +27,10 @@ export default function UsuarioForm({ route }) {
         // Função para buscar a imagem do Firebase Storage
         async function buscarImagem() {
             try {
-                const storageRef = ref(storage, 'imageUris/' + usuario.id);
+                const storageRef = ref(storage, 'image/' + usuario.id + '.jpg');
                 const imageUrl = await getDownloadURL(storageRef);
                 setImageUri(imageUrl);
-                console.log(imageUrl);
+               
             } catch (error) {
 
                 console.error("Erro ao buscar a imagem:", error);
@@ -63,18 +63,20 @@ export default function UsuarioForm({ route }) {
             setImageUri(result.uri);
         }
     };
-    const uploadImage = async () => {
-        if (imageUri) {
-            const storageRef = ref(storage, `imageUris/${usuario.id}`);
-            try {
-                await uploadBytes(storageRef, imageUri,{contentType: 'image/jpeg'});
-                console.log('Image uploaded to Firebase Storage');
-
-            } catch (e) {
-                console.error('Error uploading image: ', e);
-            }
+   const uploadImage = async () => {
+    if (imageUri) {
+        try {
+            const response = await fetch(imageUri);
+            const blob = await response.blob();
+            const storageRef = ref(storage, `image/${usuario.id}.jpg`);
+            await uploadBytes(storageRef, blob, { contentType: 'image/jpeg' });
+            console.log('Image uploaded to Firebase Storage');
+        } catch (e) {
+            console.error('Error uploading image: ', e);
         }
-    };
+    }
+};
+
     async function atualizar() {
         setCarregando(true);
         try {
@@ -112,8 +114,9 @@ export default function UsuarioForm({ route }) {
                             {imageUri && <Image source={{ uri: imageUri }} style={styles.imageInAvatar} />}
                         </View>
                     </TouchableOpacity>
-
-                    <Button style={styles.imgButton} title="Upload Image" onPress={uploadImage} />
+                    <View  style={styles.imgButton} >
+                    <Button title="Upload Image" onPress={uploadImage} />
+                    </View>
                 </View>
                 {carregando ? (
                     <View style={styles.loadingContainer}>
@@ -140,7 +143,7 @@ export default function UsuarioForm({ route }) {
                             {isVisible &&
                                 <View style={styles.box}>
                                     <FontAwesome name='check' size={60} color='#0BAC00' />
-                                    <Text style={styles.textBox}>Aula atualizada com sucesso!!!</Text>
+                                    <Text style={styles.textBox}>Usuario atualizado com sucesso!!!</Text>
                                     <TouchableOpacity onPress={toggleVisibility} style={styles.boxOk}><Text style={styles.textBox}>OK</Text></TouchableOpacity>
                                 </View>}
                             {isVisibleError &&
@@ -282,7 +285,7 @@ const styles = StyleSheet.create({
         height: 200,
         backgroundColor: 'white',
         position: 'absolute',
-        marginTop: 100,
+        marginTop: 70,
         marginHorizontal: 25,
         justifyContent: 'center',
         alignItems: 'center',
@@ -315,7 +318,8 @@ const styles = StyleSheet.create({
         position: 'absolute',
     },
     imgButton: {
-        marginLeft: 40
+      marginTop:15,
+      left:15
     }
 
 })

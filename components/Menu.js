@@ -1,10 +1,14 @@
-import React from 'react';
+import { useState, useEffect } from 'react';
 import { Text, View, StyleSheet, ScrollView, TouchableOpacity,Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import firebaseApp, { storage } from '../config';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 
 export const Menu = ({ route }) => {
+  const [imageUrl, setImageUri] = useState("");
   const nome =  route.params.nome;
+  const id = route.params.id;
   const Navigator = useNavigation();
   function acessar(menu) {
     if (menu == "UsuarioForm") {
@@ -17,12 +21,35 @@ export const Menu = ({ route }) => {
    
     
   }
+
+
+  useEffect(() => {
+    // Função para buscar a imagem do Firebase Storage
+    async function buscarImagem() {
+        try {
+            const storageRef = ref(storage, 'image/' + id + '.jpg');
+            const imageUri = await getDownloadURL(storageRef);
+            setImageUri(imageUri);
+           
+        } catch (error) {
+
+            console.error("Erro ao buscar a imagem:", error);
+        }
+    }
+
+
+    buscarImagem();
+}, [id]);
+
+
   return (
    <ScrollView>
      <View style={styles.container}>
       <View style={styles.verde}>
         <Text style={styles.texto}>Oi, {nome} !</Text>
-        <View style={styles.logo}></View>
+        <View style={styles.avatar}>
+        {imageUrl && <Image source={{ uri: imageUrl }} style={styles.imageInAvatar} />}
+        </View>
       </View> 
       <View style={styles.branco}>
        <TouchableOpacity onPress={()=>acessar('UsuarioForm')}>
@@ -52,7 +79,7 @@ export const Menu = ({ route }) => {
          <Text>Aula</Text>
         </View>
        </TouchableOpacity>
-       <TouchableOpacity>
+       <TouchableOpacity onPress={()=>acessar('Duvida')}>
         <View  style={styles.menu}>
         <Image  source={require('../assets/menu/icon-duvida.png')} style={{width:47,height:55}}/>
          
@@ -124,5 +151,20 @@ const styles = StyleSheet.create({
    borderColor:'#E9AE24',
    marginTop:65,
    marginLeft:120
-  }
+  },
+  avatar: {
+    width: 100,
+    height: 100,
+    borderWidth: 1,
+    borderRadius: 75,
+    overflow: 'hidden',
+    position: 'relative',
+    marginTop:65,
+    marginLeft:120
+},
+  imageInAvatar: {
+    width: '100%',
+    height: '100%',
+    position: 'absolute',
+}
 });

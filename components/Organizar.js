@@ -56,9 +56,9 @@ export default function Organizar() {
 
     const markedDates = {};
 
-    organizacao.forEach(data => {
-        markedDates[data] = { marked: true, selected: true, selectedColor: 'green' };
-    });
+    // organizacao.forEach(data => {
+    //     markedDates[data] = { marked: true, selected: true, selectedColor: 'green' };
+    // });
     const Navigator = useNavigation();
 
 
