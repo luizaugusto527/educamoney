@@ -4,14 +4,22 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import Collapsible from "react-native-collapsible";
 
 export default function Duvida() {
-    const [isCollapsed, setIsCollapsed] = useState(true);
-    const [arrow, setArrow] = useState('arrow-right');
+    const [isCollapsed1, setIsCollapsed1] = useState(true);
+    const [isCollapsed2, setIsCollapsed2] = useState(true);
+    const [isCollapsed3, setIsCollapsed3] = useState(true);
 
-    const toggleAccordion = () => {
-        setIsCollapsed(!isCollapsed);
-
-        isCollapsed ? setArrow('arrow-down') : setArrow('arrow-right')
+    const toggleAccordion1 = () => {
+        setIsCollapsed1(!isCollapsed1);
     };
+
+    const toggleAccordion2 = () => {
+        setIsCollapsed2(!isCollapsed2);
+    };
+
+    const toggleAccordion3 = () => {
+        setIsCollapsed3(!isCollapsed3);
+    };
+
     return (
         <View style={styles.container}>
             <View style={styles.verde}>
@@ -24,18 +32,45 @@ export default function Duvida() {
                 </View>
             </View>
             <View style={styles.branco}>
-
-                <View>
+                <View style={{marginTop:50}}>
                     <View style={styles.pergunta}>
-                        <TouchableOpacity onPress={toggleAccordion}>
-                          <View> <Text>O APP é da gratuito?</Text> <FontAwesome5 name={arrow} size={24} color='black' /></View>
+                        <TouchableOpacity onPress={toggleAccordion1}>
+                            <View style={styles.titulo}>
+                                <FontAwesome5 style={{marginRight:20}} name={isCollapsed1 ? 'arrow-right' : 'arrow-down'} size={19} color='black' />
+                                <Text style={styles.perguntatitulo}>Qual a necessidade dessa aplicação?</Text>
+                            </View>
                         </TouchableOpacity>
                     </View>
-                    <Collapsible collapsed={isCollapsed}>
-                        <Text>Conteúdo do acordeão</Text>
+                    <Collapsible collapsed={isCollapsed1} style={{width:320}}>
+                        <Text style={{marginLeft:38}} >Essa aplicação tem como objetivo principal, auxiliar os jovens a aprenderem a utilizar seu dinheiro da melhor forma possível desde cedo.</Text>
                     </Collapsible>
                 </View>
-
+                <View>
+                    <View style={styles.pergunta}>
+                        <TouchableOpacity onPress={toggleAccordion2}>
+                            <View style={styles.titulo}>
+                                <FontAwesome5 style={{marginRight:20}} name={isCollapsed2 ? 'arrow-right' : 'arrow-down'} size={19} color='black' />
+                                <Text style={styles.perguntatitulo}>Qual a necessidade dessa aplicação?</Text>
+                            </View>
+                        </TouchableOpacity>
+                    </View>
+                    <Collapsible collapsed={isCollapsed2} style={{width:320}}>
+                        <Text style={{marginLeft:38}} >Essa aplicação tem como objetivo principal, auxiliar os jovens a aprenderem a utilizar seu dinheiro da melhor forma possível desde cedo.</Text>
+                    </Collapsible>
+                </View>
+                <View>
+                    <View style={styles.pergunta}>
+                        <TouchableOpacity onPress={toggleAccordion3}>
+                            <View style={styles.titulo}>
+                                <FontAwesome5 style={{marginRight:20}} name={isCollapsed3 ? 'arrow-right' : 'arrow-down'} size={19} color='black' />
+                                <Text style={styles.perguntatitulo}>Qual a necessidade dessa aplicação?</Text>
+                            </View>
+                        </TouchableOpacity>
+                    </View>
+                    <Collapsible collapsed={isCollapsed3} style={{width:320}}>
+                        <Text style={{marginLeft:38}} >Essa aplicação tem como objetivo principal, auxiliar os jovens a aprenderem a utilizar seu dinheiro da melhor forma possível desde cedo.</Text>
+                    </Collapsible>
+                </View>
             </View>
         </View>
     )
@@ -98,10 +133,15 @@ const styles = StyleSheet.create({
     organizacaoButtonText: {
         color: 'white'
     },
-    pergunta: {
-        backgroundColor:'red',
-        width:300,
-        height:50,
-        marginTop:20
+    pergunta:{
+        marginTop:40
     },
+    perguntatitulo:{
+        fontSize:19
+    },
+    titulo:{
+        flexDirection:'row',
+        justifyContent:'space-between',
+        alignItems:'center'
+    }
 });
