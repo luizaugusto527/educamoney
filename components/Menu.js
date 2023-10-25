@@ -65,7 +65,7 @@ export const Menu = ({ route }) => {
         </View>
         
        </TouchableOpacity>
-       <TouchableOpacity>
+       <TouchableOpacity onPress={()=>acessar('Questao')}>
         <View  style={styles.menu}>
         <Image  source={require('../assets/menu/icon-puzzle.png')} style={{width:45,height:45}}/>
          
