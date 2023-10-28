@@ -28,6 +28,7 @@ LocaleConfig.defaultLocale = 'pt-br';
 export default function Organizar() {
     const [carregando, setCarregando] = useState(false)
     const [organizacao, setOrganizacao] = useState()
+    const [selectedDate, setSelectedDate] = useState(''); 
 
     useEffect(() => {
         fetchData();
@@ -54,11 +55,20 @@ export default function Organizar() {
         }
     };
 
-    const markedDates = {};
+    const selectedDateStyle = {
+        backgroundColor: 'blue',
+      };
 
-    // organizacao.forEach(data => {
-    //     markedDates[data] = { marked: true, selected: true, selectedColor: 'green' };
-    // });
+
+    const markedDates = {
+        [selectedDate]: { selected: true, selectedColor: '#29c4f4' }
+    };
+    if (organizacao) {
+        organizacao.forEach(data => {
+            markedDates[data] = { selected: true, selectedColor: 'green' };
+        });
+        
+    }
     const Navigator = useNavigation();
 
 
@@ -83,6 +93,11 @@ export default function Organizar() {
             </View>
         );
     }
+
+    const handleDate = (date) =>{
+        setDate(date.dateString);
+        setSelectedDate(date.dateString)
+    }
     const renderCustomDay = (day) => {
         return (
 
@@ -94,7 +109,7 @@ export default function Organizar() {
         Navigator.navigate("OrganizacaoDetalhe", date)
     }
     const organizacaoForm = () => {
-        Navigator.navigate("OrganizacaoForm")
+        Navigator.navigate("OrganizacaoForm", date)
     }
 
     return (
@@ -114,7 +129,7 @@ export default function Organizar() {
                     renderHeader={(date) => renderCustomHeader(date)}
                     renderArrow={(direction) => renderCustomArrow(direction)}
                     renderDay={(day) => renderCustomDay(day)}
-                    onDayPress={(date) => setDate(date.dateString)}
+                    onDayPress={(date) => handleDate(date)}
                     markedDates={markedDates}
                 />
 

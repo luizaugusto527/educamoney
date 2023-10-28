@@ -11,21 +11,22 @@ import { format } from 'date-fns';
 const db = getFirestore(firebaseApp);
 const clienteCollection = collection(db, "Organizacao");
 
-export default function OrganizacaoForm() {
+export default function OrganizacaoForm({route}) {
+    if (!route.params) {
+        route.params = new Date()
+    }
 
+    console.log(route.parms);
     const Navigator = useNavigation();
     const [carregando, setCarregando] = useState(false);
     const [date, setDate] = useState(new Date());
     const [erro, setErro] = useState(false);
     const [showData, setShowData] = useState(false);
-    const [organizacao, setOrganizacao] = useState({descricao:'',data:new Date(),valor:'',tipo:''});
+    const [organizacao, setOrganizacao] = useState({descricao:'',data:route.params,valor:'',tipo:''});
     const [operacao, setOperacao] = useState("Criada");
     const [isVisible, setIsVisible] = useState(false);
     const [isVisibleError, setIsVisibleError] = useState(false);
 
-  function teste() {
-    console.log('aaa');
-  }
     const toggleVisibility = (excluida) => {
         if (excluida)
             setOperacao("Excluida");
