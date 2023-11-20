@@ -2,14 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { Text, View, StyleSheet, TouchableOpacity, TextInput, ActivityIndicator, FlatList } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native'; // Importe useFocusEffect
 import { FontAwesome5 } from '@expo/vector-icons';
-import QuestaoList from './QuestaoList';
-import { getFirestore, collection, query, getDocs } from 'firebase/firestore';
+import PerguntasList from './PerguntaList';
+import { getFirestore, collection, query, getDocs,where } from 'firebase/firestore';
 import firebaseApp from '../config';
 
 const db = getFirestore(firebaseApp);
 
-export default function Questao() {
-  const [puzzle, setPuzzle] = useState([]);
+export default function Pergunta({ route }) {
+  const [quizId, setQuizId] = useState(route.params.id);
+  const [perguntas, setperguntas] = useState([]);
   const [busca, setBusca] = useState('');
   const [carregando, setCarregando] = useState(false);
   const Navigator = useNavigation();
@@ -27,19 +28,19 @@ export default function Questao() {
   const fetchData = async () => {
     try {
       setCarregando(true);
-      const q = query(collection(db, 'Puzzle'));
+      const q = query(collection(db, 'Pergunta'), where('quiz', '==', quizId));
       const querySnapshot = await getDocs(q);
-      const puzzleData = [];
+      const perguntasData = [];
 
       querySnapshot.forEach((doc) => {
         const data = doc.data();
-        puzzleData.push({
+        perguntasData.push({
           id: doc.id,
           titulo: data.titulo
         });
       });
 
-      setPuzzle(puzzleData);
+      setperguntas(perguntasData);
       setCarregando(false);
     } catch (error) {
       console.error('Erro ao buscar dados:', error);
@@ -48,7 +49,7 @@ export default function Questao() {
   };
 
   function inserir() {
-    Navigator.navigate('QuestaoForm');
+    Navigator.navigate('PerguntaForm',quizId);
   }
 
   return (
@@ -59,22 +60,22 @@ export default function Questao() {
             <FontAwesome5 style={styles.texto} name='arrow-left' size={24} color='black' />
           </TouchableOpacity>
           <Text style={[styles.texto, { marginLeft: 5 }]}>
-            Quiz</Text>
+            perguntas</Text>
         </View>
       </View>
       <View style={styles.branco}>
-        <TextInput style={styles.busca} placeholder='Digite a sua busca üîç' onChangeText={(text) => setBusca(text)}></TextInput>
+        <TextInput style={styles.busca} placeholder='Digite a sua busca ??' onChangeText={(text) => setBusca(text)}></TextInput>
         <TouchableOpacity onPress={inserir} style={styles.botaoAula}>
           <Text style={{ color: 'white', fontFamily: 'Roboto', fontWeight: 'bold' }}>+ Inserir</Text>
         </TouchableOpacity>
         {carregando ? <ActivityIndicator size={50} color={'#3D5E3D'} style={{marginTop:100}}></ActivityIndicator>
           : <FlatList
             showsHorizontalScrollIndicator={true}
-            data={puzzle.filter((e) =>
-              e.titulo.toLowerCase().includes(busca.toLowerCase())
+            data={perguntas.filter((pergunta) =>
+              pergunta.titulo.toLowerCase().includes(busca.toLowerCase())
             )}
-            renderItem={({ item }) => <QuestaoList item={item} />}
-            ListEmptyComponent={() => <Text>Quest√£o n√£o encontrada</Text>}
+            renderItem={({ item }) => <PerguntasList item={item} />}
+            ListEmptyComponent={() => <Text>Pergunta n„o encontrada ??. RefaÁa a busca</Text>}
           />
         }
       </View>

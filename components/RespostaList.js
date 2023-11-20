@@ -5,30 +5,25 @@ import { useNavigation } from '@react-navigation/native';
 
 
 
-export default function QuestaoList({ item }) {
+export default function RespostaList({ item }) {
     const Navigator = useNavigation();
 
 
-    function puzzleDetalhe() {
-        Navigator.navigate("QuestaoDetalhe", item);
+    function RespostaDetalhe() {
+        Navigator.navigate("RespostaDetalhe", item);
     }
-    function pergunta() {
-        Navigator.navigate("Pergunta",item);
-    }
+   
 
 
     return (
-        <TouchableOpacity onPress={puzzleDetalhe}>
+        <TouchableOpacity onPress={RespostaDetalhe}>
             <View style={styles.card}>
                 <View>
                     <Text style={styles.titulo}>{item.titulo}</Text>
                 </View>
                 <View style={styles.botoes}>
-                    <TouchableOpacity   style={styles.botaoPergunta} onPress={pergunta}>
-                        <Text  style={{color:'white',fontWeight:'bold'}}>Criar Pergunta</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity   style={styles.botao}>
-                        <Text  style={{color:'white',fontWeight:'bold'}}>Jogar</Text>
+                    <TouchableOpacity   style={styles.botao} onPress={RespostaDetalhe}>
+                        <Text  style={{color:'white',fontWeight:'bold'}}>Editar/Excluir</Text>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -63,7 +58,7 @@ const styles = StyleSheet.create({
         marginTop:16
     },
     botao: {
-        width: 75,
+        width: 105,
         height: 30,
         marginTop: 8,
         marginBottom: 20,

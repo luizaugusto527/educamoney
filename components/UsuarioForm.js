@@ -24,7 +24,7 @@ export default function UsuarioForm({ route }) {
     const [image, setImage] = useState();
 
     useEffect(() => {
-        // FunÁ„o para buscar a imagem do Firebase Storage
+        // Fun√ß√£o para buscar a imagem do Firebase Storage
         async function buscarImagem() {
             try {
                 const storageRef = ref(storage, 'image/' + usuario.id + '.jpg');
@@ -105,7 +105,7 @@ export default function UsuarioForm({ route }) {
                     <FontAwesome5 style={styles.texto} name='arrow-left' size={24} color='black' />
                 </TouchableOpacity>
                 <Text style={[styles.texto, { marginLeft: 5 }]}>
-                    Inserir Aula</Text>
+                    Usu√°rio</Text>
             </View>
             <View style={styles.form}>
                 <View style={styles.img}>
