@@ -24,6 +24,8 @@ import Resposta from './components/Resposta';
 import RespostaForm from './components/RespostaForm';
 import RespostaList from './components/RespostaList';
 import RespostaDetalhe from './components/RespostaDetalhe';
+import PlayQuiz from './components/PlayQuiz';
+import ResultadoQuiz from './components/ResultadoQuiz';
 
 export default function App() {
   const Stack = createNativeStackNavigator();
@@ -53,6 +55,8 @@ export default function App() {
             <Stack.Screen name='RespostaForm' component={RespostaForm} />
             <Stack.Screen name='RespostaList' component={RespostaList} />
             <Stack.Screen name='RespostaDetalhe' component={RespostaDetalhe} />
+            <Stack.Screen name='PlayQuiz' component={PlayQuiz} />
+            <Stack.Screen name='ResultadoQuiz' component={ResultadoQuiz} />
           </Stack.Navigator>
       </NavigationContainer>
   );

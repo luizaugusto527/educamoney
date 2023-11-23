@@ -15,6 +15,9 @@ export default function QuestaoList({ item }) {
     function pergunta() {
         Navigator.navigate("Pergunta",item);
     }
+    function jogar() {
+        Navigator.navigate("PlayQuiz",item);
+    }
 
 
     return (
@@ -27,7 +30,7 @@ export default function QuestaoList({ item }) {
                     <TouchableOpacity   style={styles.botaoPergunta} onPress={pergunta}>
                         <Text  style={{color:'white',fontWeight:'bold'}}>Criar Pergunta</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity   style={styles.botao}>
+                    <TouchableOpacity   style={styles.botao} onPress={jogar}>
                         <Text  style={{color:'white',fontWeight:'bold'}}>Jogar</Text>
                     </TouchableOpacity>
                 </View>
