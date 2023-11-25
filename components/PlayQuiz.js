@@ -54,7 +54,7 @@ const PlayQuiz = ({ route }) => {
             });
 
             setpergunta(perguntaData);
-           
+
             const arrayId = perguntaData.map((el) => {
                 return el.id
             })
@@ -70,7 +70,7 @@ const PlayQuiz = ({ route }) => {
                     id: doc.id,
                     titulo: data.titulo,
                     correta: data.correta,
-                    pergunta:data.pergunta
+                    pergunta: data.pergunta
                 });
             });
             setresposta(respostaData);
@@ -80,11 +80,11 @@ const PlayQuiz = ({ route }) => {
             setCarregando(false);
         }
     };
-    let intervalIdContador; 
+    let intervalIdContador;
     let intervalIdSegundoContador;
     const iniciarJogo = () => {
         setJogando(true);
-    
+
         intervalIdContador = setInterval(() => {
             setContador((prevContador) => {
                 if (prevContador > 1) {
@@ -120,19 +120,23 @@ const PlayQuiz = ({ route }) => {
     };
 
     function verificarResposta(resposta) {
-
+        if (respostaSelecionada !== null) {
+            return;
+        }
         setRespostaSelecionada(resposta.id);
         if (resposta.correta) {
             setRespostaCerta(resposta.id);
             setQtdCerta(prevQtdCerta => prevQtdCerta + 1);
-           
+
         }
-        else
-        {
-            setQtdErrada(prevQtdCerta => prevQtdCerta + 1);
+        
+        else {
+            setQtdErrada(prevQtdErrada => prevQtdErrada + 1);
         }
         setContador(0);
         setSegundoContador(0);
+
+        
 
 
 
@@ -141,13 +145,12 @@ const PlayQuiz = ({ route }) => {
     const proximaPergunta = () => {
         clearInterval(intervalIdContador);
         clearInterval(intervalIdSegundoContador);
-    
+
         setIndicePergunta((prevIndice) => prevIndice + 1);
         const indice = indicePergunta + 1;
-        if(indice == pergunta.length)
-        {
-           const resultado = {qtdCerta,qtdErrada}
-            Navigator.navigate('ResultadoQuiz',resultado);
+        if (indice == pergunta.length) {
+            const resultado = { qtdCerta, qtdErrada }
+            Navigator.navigate('ResultadoQuiz', resultado);
         }
 
         setRespostaCerta(null);
@@ -215,7 +218,17 @@ const PlayQuiz = ({ route }) => {
                                 </TouchableOpacity>
                             </>
                         )}
-                        {larguraBarraTempo2 === 0 && <Text style={styles.pergunta}>Acabou</Text>}
+                        {larguraBarraTempo2 === 0 &&
+                              <>
+                              <Text style={styles.pergunta}>Acabou o tempo, a questão foi considerada errada</Text>
+                              <TouchableOpacity style={styles.proximaPergunta} onPress={() => {
+                                  setQtdErrada(prevQtdErrada => prevQtdErrada + 1); 
+                                  proximaPergunta();
+                              }}>
+                                  <Text style={{ color: 'white' }}>Próxima </Text>
+                              </TouchableOpacity>
+                          </>
+                        }
                     </>
                 )}
             </View>
@@ -254,7 +267,7 @@ const styles = StyleSheet.create({
     },
     contador: {
         fontSize: 32,
-        marginTop: 20,
+        marginTop: 50,
         marginBottom: 20,
         marginTop: 150
     },

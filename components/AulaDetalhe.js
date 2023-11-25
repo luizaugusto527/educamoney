@@ -78,7 +78,7 @@ export default function AulaDetalhe({ route }) {
                     <FontAwesome5 style={styles.texto} name='arrow-left' size={24} color='black' />
                 </TouchableOpacity>
                 <Text style={[styles.texto, { marginLeft: 5 }]}>
-                    Inserir Aula</Text>
+                    Editar Aula</Text>
             </View>
             <View style={styles.form}>
                 {carregando ? (

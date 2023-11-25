@@ -3,6 +3,7 @@ import { Text, View, StyleSheet, ScrollView, TouchableOpacity,Image } from 'reac
 import { useNavigation } from '@react-navigation/native';
 import firebaseApp, { storage } from '../config';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { getAuth, signOut} from 'firebase/auth';
 
 
 export const Menu = ({ route }) => {
@@ -21,7 +22,16 @@ export const Menu = ({ route }) => {
    
     
   }
-
+  async function logout() {
+    try {
+      const auth = getAuth(firebaseApp);
+      await signOut(auth);
+     
+      Navigator.navigate("Login");
+    } catch (error) {
+      console.error('Erro durante o logout:', error);
+    }
+  }
 
   useEffect(() => {
     // Função para buscar a imagem do Firebase Storage
@@ -86,7 +96,7 @@ export const Menu = ({ route }) => {
          <Text>Duvida</Text>
         </View>
        </TouchableOpacity>
-       <TouchableOpacity>
+       <TouchableOpacity  onPress={()=>logout()} >
         <View  style={styles.menu}>
         <Image  source={require('../assets/menu/icon-sair.png')} style={{width:47,height:55}}/>
          
@@ -160,7 +170,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     position: 'relative',
     marginTop:65,
-    marginLeft:120
+    marginLeft:90
 },
   imageInAvatar: {
     width: '100%',

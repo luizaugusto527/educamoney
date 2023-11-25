@@ -176,9 +176,9 @@ const styles = StyleSheet.create({
         color: 'red'
     },
     voltar: {
-        width: 120,
+        width: 150,
         marginBottom: 20,
-        marginLeft: 10,
+        marginLeft: 30,
         marginRight: 250,
         flexDirection: 'row',
         alignItems: 'center'

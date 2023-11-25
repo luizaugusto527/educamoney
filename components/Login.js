@@ -34,6 +34,7 @@ export default function Login() {
         querySnapshot.forEach((doc) => {
           let usuarioData = doc.data();
           usuarioData.id = doc.id;
+          setCarregando(false);
           Navigator.navigate("Menu",usuarioData)
        
         });

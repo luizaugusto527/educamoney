@@ -50,7 +50,7 @@ export default function PerguntaForm({ route }) {
                     </View>
                 ) : (
                     <>
-                        <Text style={styles.o}>Cadastrar uma Perguntaa</Text>
+                        <Text style={styles.o}>Cadastrar uma Pergunta</Text>
                         {erro && <Text style={[styles.erroLogin]}>{erro}</Text>}
                         <ScrollView>
                             <Text style={styles.label}>Titulo</Text>
@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold'
     },
     o: {
-        fontSize: 30,
+        fontSize: 24,
         fontFamily: 'Roboto',
         marginTop: 19,
         marginHorizontal: 24,
@@ -165,12 +165,12 @@ const styles = StyleSheet.create({
         color: 'red'
     },
     voltar: {
-        width: 120,
+        width: 150,
         marginBottom: 20,
-        marginLeft: 10,
+        marginLeft: 30,
         marginRight: 250,
         flexDirection: 'row',
-        alignItems: 'center'
+        alignItems: 'center',
     },
     texto: {
         fontSize: 20,
@@ -178,7 +178,7 @@ const styles = StyleSheet.create({
         marginBottom: 30,
         color: 'white',
         fontFamily: 'Roboto',
-        alignItems: 'center'
+        alignItems: 'center',
     },
     form: {
         width: '100%',

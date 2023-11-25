@@ -43,7 +43,7 @@ export default function FormLogin() {
             setErroEmail("");
         }
     
-        if (senha === '') {
+        if (senha === '' || senha.length < 6) {
             setErroSenha("Senha Inválida");
         } else {
             setErroSenha("");

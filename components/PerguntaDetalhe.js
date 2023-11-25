@@ -75,7 +75,7 @@ export default function PerguntaDetalhe({ route }) {
                     <FontAwesome5 style={styles.texto} name='arrow-left' size={24} color='black' />
                 </TouchableOpacity>
                 <Text style={[styles.texto, { marginLeft: 5 }]}>
-                    Inserir pergunta</Text>
+                    Editar pergunta</Text>
             </View>
             <View style={styles.form}>
                 {carregando ? (
@@ -84,7 +84,7 @@ export default function PerguntaDetalhe({ route }) {
                     </View>
                 ) : (
                     <>
-                        <Text style={styles.o}>pergunta</Text>
+                        <Text style={styles.o}>Editar pergunta</Text>
                         {erro && <Text style={[styles.erroLogin]}>{erro}</Text>}
                         <ScrollView>
                             <Text style={styles.label}>Titulo</Text>
@@ -212,9 +212,9 @@ const styles = StyleSheet.create({
         color: 'red'
     },
     voltar: {
-        width: 120,
+        width: 150,
         marginBottom: 20,
-        marginLeft: 10,
+        marginLeft: 30,
         marginRight: 250,
         flexDirection: 'row',
         alignItems: 'center'
@@ -225,7 +225,7 @@ const styles = StyleSheet.create({
         marginBottom: 30,
         color: 'white',
         fontFamily: 'Roboto',
-        alignItems: 'center'
+        alignItems: 'center',
     },
     form: {
         width: '100%',

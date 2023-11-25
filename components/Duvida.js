@@ -28,7 +28,7 @@ export default function Duvida() {
                         <FontAwesome5 style={styles.texto} name='arrow-left' size={24} color='black' />
                     </TouchableOpacity>
                     <Text style={[styles.texto, { marginLeft: 5 }]}>
-                        Dúvida</Text>
+                        Dúvidas</Text>
                 </View>
             </View>
             <View style={styles.branco}>
@@ -42,7 +42,7 @@ export default function Duvida() {
                         </TouchableOpacity>
                     </View>
                     <Collapsible collapsed={isCollapsed1} style={{width:320}}>
-                        <Text style={{marginLeft:38}} >Essa aplicação tem como objetivo principal, auxiliar os jovens a aprenderem a utilizar seu dinheiro da melhor forma possível desde cedo.</Text>
+                        <Text style={{marginLeft:38}} >Essa aplicação tem como objetivo principal, auxiliar os jovens a aprenderem a utilizar seu dinheiro da melhor forma possÃ­vel desde cedo.</Text>
                     </Collapsible>
                 </View>
                 <View>
@@ -50,12 +50,13 @@ export default function Duvida() {
                         <TouchableOpacity onPress={toggleAccordion2}>
                             <View style={styles.titulo}>
                                 <FontAwesome5 style={{marginRight:20}} name={isCollapsed2 ? 'arrow-right' : 'arrow-down'} size={19} color='black' />
-                                <Text style={styles.perguntatitulo}>Qual a necessidade dessa aplicação?</Text>
+                                <Text style={styles.perguntatitulo}>O que é um orçamento e por que ela é importante ?</Text>
                             </View>
                         </TouchableOpacity>
                     </View>
                     <Collapsible collapsed={isCollapsed2} style={{width:320}}>
-                        <Text style={{marginLeft:38}} >Essa aplicação tem como objetivo principal, auxiliar os jovens a aprenderem a utilizar seu dinheiro da melhor forma possível desde cedo.</Text>
+                        <Text style={{marginLeft:38}} >Um orçamento é um plano que ajuda a controlar suas despesas e receitas. Ele é importante porque permite que você saiba para onde seu dinheiro está indo, ajuda a evitar gastos excessivos e a poupar para atingir suas metas financeiras.
+</Text>
                     </Collapsible>
                 </View>
                 <View>
@@ -63,12 +64,12 @@ export default function Duvida() {
                         <TouchableOpacity onPress={toggleAccordion3}>
                             <View style={styles.titulo}>
                                 <FontAwesome5 style={{marginRight:20}} name={isCollapsed3 ? 'arrow-right' : 'arrow-down'} size={19} color='black' />
-                                <Text style={styles.perguntatitulo}>Qual a necessidade dessa aplicação?</Text>
+                                <Text style={styles.perguntatitulo}>Quais são os benefícios de começar a investir desde jovem?</Text>
                             </View>
                         </TouchableOpacity>
                     </View>
                     <Collapsible collapsed={isCollapsed3} style={{width:320}}>
-                        <Text style={{marginLeft:38}} >Essa aplicação tem como objetivo principal, auxiliar os jovens a aprenderem a utilizar seu dinheiro da melhor forma possível desde cedo.</Text>
+                        <Text style={{marginLeft:38}} >Começar a investir desde jovem tem várias vantagens. Isso permite que você aproveite o poder dos juros compostos, construa riqueza ao longo do tempo e tenha mais flexibilidade financeira no futuro.</Text>
                     </Collapsible>
                 </View>
             </View>
@@ -139,9 +140,12 @@ const styles = StyleSheet.create({
     perguntatitulo:{
         fontSize:19
     },
-    titulo:{
-        flexDirection:'row',
-        justifyContent:'space-between',
-        alignItems:'center'
-    }
+    titulo: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingHorizontal: 20, // Ajuste conforme necessário
+        paddingVertical: 10, // Ajuste conforme necessário
+    },
+    
 });

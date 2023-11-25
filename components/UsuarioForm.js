@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Button, ScrollView, TextInput, ActivityIndicator, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Button, ScrollView, TextInput, ActivityIndicator, Image, Alert} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { FontAwesome, FontAwesome5, Ionicons } from '@expo/vector-icons';
 import { getFirestore, collection, doc, updateDoc } from 'firebase/firestore';
@@ -22,6 +22,7 @@ export default function UsuarioForm({ route }) {
     const [isVisibleError, setIsVisibleError] = useState(false);
     const [imageUri, setImageUri] = useState(null);
     const [image, setImage] = useState();
+    const [erroEmail, setErroEmail] = useState("")
 
     useEffect(() => {
         // Função para buscar a imagem do Firebase Storage
@@ -30,7 +31,7 @@ export default function UsuarioForm({ route }) {
                 const storageRef = ref(storage, 'image/' + usuario.id + '.jpg');
                 const imageUrl = await getDownloadURL(storageRef);
                 setImageUri(imageUrl);
-               
+
             } catch (error) {
 
                 console.error("Erro ao buscar a imagem:", error);
@@ -63,19 +64,36 @@ export default function UsuarioForm({ route }) {
             setImageUri(result.uri);
         }
     };
-   const uploadImage = async () => {
-    if (imageUri) {
-        try {
-            const response = await fetch(imageUri);
-            const blob = await response.blob();
-            const storageRef = ref(storage, `image/${usuario.id}.jpg`);
-            await uploadBytes(storageRef, blob, { contentType: 'image/jpeg' });
-            console.log('Image uploaded to Firebase Storage');
-        } catch (e) {
-            console.error('Error uploading image: ', e);
+    const uploadImage = async () => {
+        if (imageUri) {
+            try {
+                const response = await fetch(imageUri);
+                const blob = await response.blob();
+                const storageRef = ref(storage, `image/${usuario.id}.jpg`);
+                await uploadBytes(storageRef, blob, { contentType: 'image/jpeg' });
+                setIsVisible(true);
+                console.log('Image uploaded to Firebase Storage');
+            } catch (e) {
+                Alert.alert('Error uploading image: ', e);
+                console.error('Error uploading image: ', e);
+            }
         }
+    };
+    function validar() {
+        const email = usuario.email;
+        let regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+
+        if (!regex.test(email)) {
+            setErroEmail("E-mail Invalido")
+        } else {
+            setErroEmail("")
+
+        }
+
+        regex.test(email) ? atualizar() : null
+
+
     }
-};
 
     async function atualizar() {
         setCarregando(true);
@@ -93,7 +111,7 @@ export default function UsuarioForm({ route }) {
             toggleVisibility();
 
         } catch (error) {
-            console.error("Erro ao atualizar a aula:", error);
+            console.error("Erro ao atualizar o usu�rio:", error);
             setCarregando(false);
         }
 
@@ -114,8 +132,8 @@ export default function UsuarioForm({ route }) {
                             {imageUri && <Image source={{ uri: imageUri }} style={styles.imageInAvatar} />}
                         </View>
                     </TouchableOpacity>
-                    <View  style={styles.imgButton} >
-                    <Button title="Upload Image" onPress={uploadImage} />
+                    <View style={styles.imgButton} >
+                        <Button title="Mudar Imagem" onPress={uploadImage} />
                     </View>
                 </View>
                 {carregando ? (
@@ -131,13 +149,10 @@ export default function UsuarioForm({ route }) {
                             {/* <Text style={styles.erro}>{erroNome}</Text>  */}
                             <Text style={styles.label}>E-mail</Text>
                             <TextInput style={styles.input} onChangeText={(text) => setUsuario({ ...usuario, email: text })} value={usuario.email} />
-
+                            <Text style={styles.erro}>{erroEmail}</Text>
                             <View style={styles.botoesArea}>
-                                <TouchableOpacity onPress={atualizar} style={styles.button}>
+                                <TouchableOpacity onPress={validar} style={styles.button}>
                                     <Text style={styles.textButton}>Atualizar</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity style={[styles.button, { backgroundColor: '#FF4500' }]}>
-                                    <Text style={styles.textButton}>Excluir</Text>
                                 </TouchableOpacity>
                             </View>
                             {isVisible &&
@@ -318,8 +333,9 @@ const styles = StyleSheet.create({
         position: 'absolute',
     },
     imgButton: {
-      marginTop:15,
-      left:15
+        marginTop: 15,
+        width: 130,
+        left: 15
     }
 
 })

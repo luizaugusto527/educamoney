@@ -61,11 +61,11 @@ export default function Resposta({ route }) {
             <FontAwesome5 style={styles.texto} name='arrow-left' size={24} color='black' />
           </TouchableOpacity>
           <Text style={[styles.texto, { marginLeft: 5 }]}>
-            respostas</Text>
+            Respostas</Text>
         </View>
       </View>
       <View style={styles.branco}>
-        <TextInput style={styles.busca} placeholder='Digite a sua busca ??' onChangeText={(text) => setBusca(text)}></TextInput>
+        <TextInput style={styles.busca} placeholder='Digite a sua busca 🔍' onChangeText={(text) => setBusca(text)}></TextInput>
         <TouchableOpacity onPress={inserir} style={styles.botaoAula}>
           <Text style={{ color: 'white', fontFamily: 'Roboto', fontWeight: 'bold' }}>+ Inserir</Text>
         </TouchableOpacity>
@@ -76,7 +76,7 @@ export default function Resposta({ route }) {
               resposta.titulo.toLowerCase().includes(busca.toLowerCase())
             )}
             renderItem={({ item }) => <RespostaList item={item} />}
-            ListEmptyComponent={() => <Text>Resposta não encontrada ??. Refaça a busca</Text>}
+            ListEmptyComponent={() => <Text>Resposta nÃ£o encontrada ??. RefaÃ§a a busca</Text>}
           />
         }
       </View>

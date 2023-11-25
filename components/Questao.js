@@ -74,7 +74,7 @@ export default function Questao() {
               e.titulo.toLowerCase().includes(busca.toLowerCase())
             )}
             renderItem={({ item }) => <QuestaoList item={item} />}
-            ListEmptyComponent={() => <Text>Questão não encontrada</Text>}
+            ListEmptyComponent={() => <Text>Quiz não encontrado</Text>}
           />
         }
       </View>

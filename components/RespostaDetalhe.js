@@ -77,7 +77,7 @@ export default function RespostaDetalhe({ route }) {
                     <FontAwesome5 style={styles.texto} name='arrow-left' size={24} color='black' />
                 </TouchableOpacity>
                 <Text style={[styles.texto, { marginLeft: 5 }]}>
-                    Inserir resposta</Text>
+                    Editar resposta</Text>
             </View>
             <View style={styles.form}>
                 {carregando ? (
@@ -218,9 +218,9 @@ const styles = StyleSheet.create({
         color: 'red'
     },
     voltar: {
-        width: 120,
+        width: 150,
         marginBottom: 20,
-        marginLeft: 10,
+        marginLeft: 30,
         marginRight: 250,
         flexDirection: 'row',
         alignItems: 'center'
